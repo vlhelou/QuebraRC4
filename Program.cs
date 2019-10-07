@@ -21,8 +21,9 @@ namespace QuebraRC4
             string texto = "A sexta-feira (4) é de metal no Rock In Rio e basta uma olhada rápida para perceber que, por aqui, preto e camisetas de banda, principalmente do Iron Maiden, são a ordem do dia na Cidade do Rock. Mesmo assim, muita gente";
             byte[] arTexto = Encoding.ASCII.GetBytes(texto);
             byte[] arAlvo = StringToByteArray(hash);
-            ulong inicio = 4400000;
-            //ulong maximo = 1099511627776;
+            //ulong inicio = 4400000;
+            ulong inicio = UltimoValor();
+
             ulong ends = 1099511627776;
             //1099511627776
             using (System.IO.StreamWriter file = new System.IO.StreamWriter("log.txt", true))
@@ -55,26 +56,6 @@ namespace QuebraRC4
 
                 }
 
-                /* 
-                for (ulong i = inicio; i < 1099511627776; i++)
-                {
-                    if (VerificaChave(
-                        arAlvo,
-                        LimpaZeros(BitConverter.GetBytes(i)),
-                        arTexto,
-                        file
-                        ))
-                    {
-                        return;
-                    }
-                    if (i % 100000 == 0)
-                    {
-                        Console.WriteLine(i.ToString("N0"));
-                        file.WriteLine($"{DateTime.Now}; {i} ");
-                        file.Flush();
-                    }
-                }
-                */
             }
 
             Console.WriteLine("fim");
@@ -143,6 +124,32 @@ namespace QuebraRC4
                 return true;
             }
             return false;
+        }
+
+        static ulong UltimoValor()
+        {
+            ulong retorno = 0;
+            if (System.IO.File.Exists("log.txt"))
+            {
+
+                System.IO.StreamReader Arquivo = new System.IO.StreamReader("log.txt");
+                string linha;
+                string UltimaLinha=string.Empty;
+                while ((linha = Arquivo.ReadLine()) != null)
+                {
+                    if (!string.IsNullOrEmpty(linha))
+                        UltimaLinha = linha;
+                }
+                Arquivo.Close();
+                if (!string.IsNullOrEmpty(UltimaLinha)){
+                    string[] valores = UltimaLinha.Split(";");
+                    if (valores.Length==2){
+                        ulong.TryParse(valores[1].Trim(), out retorno);
+                        
+                    }
+                }
+            }
+            return retorno;
         }
     }
 }
