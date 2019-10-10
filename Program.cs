@@ -16,22 +16,34 @@ namespace QuebraRC4
             //long outro = 296443535898841000000000000;
             // byte[] teste = BitConverter.GetBytes(18223372036854775807);
 
+            // sucesso: [146][152][238][21][15][0][0][0] 
+            //
 
-            string hash = "3B54676D6B0DE3A0CA95983B562146604AEC49D401C4B7B67363F73A9D157D86FDE9956A4947E0B549A72CEFC698F98BBC6D52987662F776B8B59DA7AF2F74E5854AFEB8B96BFC379CCE631B83331AE3897EC9E282E2C878057CC6CF0B00CFE7757E72DA04B1E4457B66FEAC4D326791BB44648C21415AE1D2ED4EB49179CE10B40F0CE8A9263E55FF2145CB74C3603BAD659C55FF2C681834691D06BF7AEB4CDFC03DC1D35F91BC01C0264370584B3B968FAECCD434BAED4B1D96F9FC75F93EBB1E03A52C1443F7D7373A6EE28B21B3CFE157B4C2E92A61AA1264D7";
-            string texto = "A sexta-feira (4) é de metal no Rock In Rio e basta uma olhada rápida para perceber que, por aqui, preto e camisetas de banda, principalmente do Iron Maiden, são a ordem do dia na Cidade do Rock. Mesmo assim, muita gente";
-            byte[] arTexto = Encoding.ASCII.GetBytes(texto);
-            byte[] arAlvo = StringToByteArray(hash);
+            byte[] senha = { 146, 152, 238, 21, 15 };
+
+            byte[] Tentativatexto = Encoding.ASCII.GetBytes("hoje e o meu dia e que dia mais feliz");
+
+
+
+
+            byte[] resultado =  clRC4.Decrypt(senha, Tentativatexto);
+            Console.WriteLine(BitConverter.ToString(resultado));
+
+            //string hash = "1C017D287215EB";
+            //string texto = "fui ali";
+
+            //byte[] arTexto = Encoding.ASCII.GetBytes(texto);
+            //byte[] arAlvo = StringToByteArray(hash);
             //ulong inicio = 4400000;
-            ulong inicio = UltimoValor();
+            //ulong inicio = UltimoValor();
 
-            ulong ends = 1099511627776;
+            //ulong ends = 1099511627776;
             //1099511627776
+            /*
             using (System.IO.StreamWriter file = new System.IO.StreamWriter("log.txt", true))
             {
-
                 for (ulong start = inicio; start < ends; start++)
                 {
-
                     if (VerificaChave(
                         arAlvo,
                         BitConverter.GetBytes(start),
@@ -41,24 +53,17 @@ namespace QuebraRC4
                     {
                         return;
                     }
-
-                    /*Parallel.For(0, 1000000, index =>
-                    {
-
-                    });*/
-                    if (start % 100000 == 0)
+                    if (start % 1000000 == 0)
                     {
                         Console.WriteLine(start.ToString("N0"));
                         file.WriteLine($"{DateTime.Now}; {start} ");
                         file.Flush();
-
                     }
-
                 }
-
             }
-
+            */
             Console.WriteLine("fim");
+            Console.ReadKey();
         }
 
 
@@ -115,7 +120,13 @@ namespace QuebraRC4
 
         static bool VerificaChave(byte[] Alvo, byte[] tentativa, byte[] TextoOrigem, System.IO.StreamWriter log)
         {
-            byte[] arHash = clRC4.Encrypt(tentativa, TextoOrigem);
+            byte[] ar40bt = new byte[5];
+            ar40bt[0] = tentativa[0];
+            ar40bt[1] = tentativa[1];
+            ar40bt[2] = tentativa[2];
+            ar40bt[3] = tentativa[3];
+            ar40bt[4] = tentativa[4];
+            byte[] arHash = clRC4.Encrypt(ar40bt, TextoOrigem);
             if (arHash.SequenceEqual(Alvo))
             {
                 Console.WriteLine("functionou");
@@ -134,18 +145,20 @@ namespace QuebraRC4
 
                 System.IO.StreamReader Arquivo = new System.IO.StreamReader("log.txt");
                 string linha;
-                string UltimaLinha=string.Empty;
+                string UltimaLinha = string.Empty;
                 while ((linha = Arquivo.ReadLine()) != null)
                 {
                     if (!string.IsNullOrEmpty(linha))
                         UltimaLinha = linha;
                 }
                 Arquivo.Close();
-                if (!string.IsNullOrEmpty(UltimaLinha)){
+                if (!string.IsNullOrEmpty(UltimaLinha))
+                {
                     string[] valores = UltimaLinha.Split(";");
-                    if (valores.Length==2){
+                    if (valores.Length == 2)
+                    {
                         ulong.TryParse(valores[1].Trim(), out retorno);
-                        
+
                     }
                 }
             }
